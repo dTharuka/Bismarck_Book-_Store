@@ -86,4 +86,31 @@ deleteItem:RequestHandler =async (req:Request,res:Response):Promise<Response> =>
       }
 }
 
+saveImage:RequestHandler =async (req:Request,res:Response):Promise<Response> => {
+  try {
+      // destructuring assignment
+      const { id } = req.params;
+
+      let item = await Item.findById(id);
+      if(item &&req.file){
+      item.photo=req.file.originalname.toString(); 
+      let updatedItem = await Item.findByIdAndUpdate(id, item, {
+        new: true,
+      }); return res
+      .status(200)
+      .json({ message: "Item updated.", responseData: updatedItem });}
+
+      return res
+        .status(200)
+        .json({ message: "Item updated.", responseData: "" });
+     
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return res.status(500).json({ message: error.message });
+      } else {
+        return res.status(500).json({ message: "Unknown error occured." });
+      }
+    }
+}
+
 }
